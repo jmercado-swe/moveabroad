@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="MoveAbroad helps Filipinos look up countries and see basic facts before working, studying or traveling abroad."
+    />
+    <title>MoveAbroad | Find a Country</title>
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="./js/main.js" type="module"></script>
+  </head>
+
+  <body>
+    <header id="main-header"></header>
+
+    <main>
+      <section class="intro">
+        <h1>Where do you want to go?</h1>
+        <p>Search for a country to learn about it before you move abroad.</p>
+      </section>
+
+      <section class="filters" aria-label="Search and filter countries">
+        <div class="filter-field search-field">
+          <label for="search">Search</label>
+          <input
+            type="search"
+            id="search"
+            placeholder="Country or capital city"
+          />
+        </div>
+        <div class="filter-field">
+          <label for="region">Region</label>
+          <select id="region">
+            <option value="">All regions</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="income">Income level</label>
+          <select id="income">
+            <option value="">All income levels</option>
+          </select>
+        </div>
+        <button type="button" id="clear-filters">Clear</button>
+      </section>
+
+      <p class="results-count" id="results-count" aria-live="polite"></p>
+      <ul class="country-list" id="country-list"></ul>
+    </main>
+
+    <footer id="main-footer"></footer>
+  </body>
+</html>
