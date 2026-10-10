@@ -24,4 +24,31 @@ export default class CountryData {
       (country) => country.region.value.trim() !== 'Aggregates',
     );
   }
+
+  // gets one country by its 2-letter code, like "JP"
+  async getCountry(code) {
+    const response = await fetch(`${baseURL}country/${code}?format=json`);
+    const data = await convertToJson(response);
+
+    // if the code is wrong, the World Bank sends a message instead of data[1]
+    if (!data[1]) {
+      throw new Error('Country not found');
+    }
+    return data[1][0];
+  }
+
+  // gets the newest value of one indicator, like population, for a country.
+  // mrnev=1 means "most recent year that has a value"
+  async getIndicator(code, indicator) {
+    const response = await fetch(
+      `${baseURL}country/${code}/indicator/${indicator}?format=json&mrnev=1`,
+    );
+    const data = await convertToJson(response);
+
+    // some small countries have no data for some indicators
+    if (!data[1] || data[1].length === 0) {
+      return null;
+    }
+    return { value: data[1][0].value, year: data[1][0].date };
+  }
 }

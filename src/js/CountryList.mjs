@@ -6,6 +6,7 @@ function countryCardTemplate(country) {
   const capital = country.capitalCity || 'No capital listed';
 
   return `<li class="country-card">
+    <a href="/country/index.html?code=${country.iso2Code}">
     <img
       src="https://flagcdn.com/w320/${code}.png"
       alt="Flag of ${country.name}"
@@ -15,6 +16,7 @@ function countryCardTemplate(country) {
     <p class="capital">Capital: ${capital}</p>
     <p class="region">${country.region.value.trim()}</p>
     <p class="income-badge">${country.incomeLevel.value}</p>
+    </a>
   </li>`;
 }
 
