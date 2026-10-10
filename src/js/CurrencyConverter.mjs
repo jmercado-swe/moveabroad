@@ -1,3 +1,7 @@
+import { getLocalStorage, setLocalStorage } from './utils.mjs';
+
+const AMOUNT_KEY = 'ma-last-amount';
+
 // shows a number as money, like "¥24,595.00"
 function formatMoney(amount, currencyCode) {
   return new Intl.NumberFormat('en-US', {
@@ -40,6 +44,8 @@ export default class CurrencyConverter {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       this.convert(form.elements['php-amount'].value);
+      // remember the amount for the next country the user opens
+      setLocalStorage(AMOUNT_KEY, form.elements['php-amount'].value);
     });
 
     // show a first result right away
@@ -51,7 +57,7 @@ export default class CurrencyConverter {
       <form id="converter-form" class="converter-form">
         <label for="php-amount">Amount in Philippine pesos (PHP)</label>
         <div class="converter-row">
-          <input type="number" id="php-amount" name="php-amount" min="1" step="any" value="10000" required />
+          <input type="number" id="php-amount" name="php-amount" min="1" step="any" value="${getLocalStorage(AMOUNT_KEY) || 10000}" required />
           <button type="submit">Convert</button>
         </div>
       </form>
@@ -64,7 +70,12 @@ export default class CurrencyConverter {
   convert(amount) {
     const pesos = Number(amount);
     const converted = pesos * this.rate;
-    this.element.querySelector('#converter-result').textContent =
-      `${formatMoney(pesos, 'PHP')} = ${formatMoney(converted, this.currency.code)}`;
+    const result = this.element.querySelector('#converter-result');
+    result.textContent = `${formatMoney(pesos, 'PHP')} = ${formatMoney(converted, this.currency.code)}`;
+
+    // replay the "flash" animation every time a new result shows
+    result.classList.remove('flash');
+    void result.offsetWidth; // makes the browser restart the animation
+    result.classList.add('flash');
   }
 }

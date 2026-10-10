@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'src/index.html'),
         country: resolve(__dirname, 'src/country/index.html'),
+        favorites: resolve(__dirname, 'src/favorites/index.html'),
       },
     },
   },

@@ -3,8 +3,9 @@ import CountryData from './CountryData.mjs';
 import CurrencyData from './CurrencyData.mjs';
 import CountryDetails from './CountryDetails.mjs';
 import CurrencyConverter from './CurrencyConverter.mjs';
+import { updateFavoritesBadge } from './Favorites.mjs';
 
-loadHeaderFooter();
+loadHeaderFooter().then(updateFavoritesBadge);
 
 const code = getParam('code');
 const detailsElement = qs('#country-details');

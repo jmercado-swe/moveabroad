@@ -1,5 +1,17 @@
 const baseURL = 'https://api.worldbank.org/v2/';
 
+// keeps only the fields the app uses, with simple names.
+// the same shape is saved in localStorage for favorites
+export function simplifyCountry(country) {
+  return {
+    code: country.iso2Code,
+    name: country.name,
+    capital: country.capitalCity || 'No capital listed',
+    region: country.region.value.trim(),
+    income: country.incomeLevel.value,
+  };
+}
+
 function convertToJson(res) {
   if (res.ok) {
     return res.json();
@@ -20,9 +32,9 @@ export default class CountryData {
 
     // the list also has groups like "World" or "Euro area" that are not real countries.
     // those groups have the region "Aggregates", so we remove them
-    return countries.filter(
-      (country) => country.region.value.trim() !== 'Aggregates',
-    );
+    return countries
+      .filter((country) => country.region.value.trim() !== 'Aggregates')
+      .map(simplifyCountry);
   }
 
   // gets one country by its 2-letter code, like "JP"
@@ -34,7 +46,7 @@ export default class CountryData {
     if (!data[1]) {
       throw new Error('Country not found');
     }
-    return data[1][0];
+    return simplifyCountry(data[1][0]);
   }
 
   // gets the newest value of one indicator, like population, for a country.

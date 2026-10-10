@@ -1,3 +1,5 @@
+import { isFavorite, toggleFavorite, setHeartButton } from './Favorites.mjs';
+
 // shows an indicator value with its year, or "No data"
 function indicatorText(indicator, formatFn) {
   if (!indicator || indicator.value === null) {
@@ -7,19 +9,21 @@ function indicatorText(indicator, formatFn) {
 }
 
 function countryDetailsTemplate(country, population, gdp, currency) {
-  const code = country.iso2Code.toLowerCase();
-  const capital = country.capitalCity || 'No capital listed';
   const currencyText = currency
     ? `${currency.name} (${currency.code})`
     : 'Not available';
 
   return `
     <div class="country-header">
-      <img src="https://flagcdn.com/w640/${code}.png" alt="Flag of ${country.name}" />
+      <img src="https://flagcdn.com/w640/${country.code.toLowerCase()}.png" alt="Flag of ${country.name}" />
       <div>
         <h1>${country.name}</h1>
-        <p class="country-sub">${capital} · ${country.region.value.trim()}</p>
-        <p class="income-badge">${country.incomeLevel.value}</p>
+        <p class="country-sub">${country.capital} · ${country.region}</p>
+        <p class="income-badge">${country.income}</p>
+        <button type="button" class="favorite-button" id="favorite-button" aria-pressed="false">
+          <span class="heart" aria-hidden="true">&#9829;</span>
+          <span class="favorite-text">Add to favorites</span>
+        </button>
       </div>
     </div>
 
@@ -34,15 +38,15 @@ function countryDetailsTemplate(country, population, gdp, currency) {
       </li>
       <li class="fact-tile">
         <h2>Region</h2>
-        <p>${country.region.value.trim()}</p>
+        <p>${country.region}</p>
       </li>
       <li class="fact-tile">
         <h2>Income level</h2>
-        <p>${country.incomeLevel.value}</p>
+        <p>${country.income}</p>
       </li>
       <li class="fact-tile">
         <h2>Capital</h2>
-        <p>${capital}</p>
+        <p>${country.capital}</p>
       </li>
       <li class="fact-tile">
         <h2>Currency</h2>
@@ -57,6 +61,7 @@ export default class CountryDetails {
     this.countryData = countryData;
     this.currencyData = currencyData;
     this.element = element;
+    this.country = null;
     this.currency = null;
   }
 
@@ -69,6 +74,7 @@ export default class CountryDetails {
       this.currencyData.getCurrencyInfo(this.code.toUpperCase()),
     ]);
 
+    this.country = country;
     this.currency = currency;
     document.title = `MoveAbroad | ${country.name}`;
     this.element.innerHTML = countryDetailsTemplate(
@@ -77,5 +83,23 @@ export default class CountryDetails {
       gdp,
       currency,
     );
+    this.setupFavoriteButton();
+  }
+
+  setupFavoriteButton() {
+    const button = this.element.querySelector('#favorite-button');
+    const text = button.querySelector('.favorite-text');
+
+    const showState = (saved, animate) => {
+      setHeartButton(button, saved, this.country.name, animate);
+      text.textContent = saved ? 'Saved to favorites' : 'Add to favorites';
+    };
+
+    showState(isFavorite(this.country.code), false);
+
+    button.addEventListener('click', () => {
+      const saved = toggleFavorite(this.country);
+      showState(saved, true);
+    });
   }
 }
